@@ -4,18 +4,24 @@ import com.myit.controller.vo.VacationFormVO;
 import com.myit.dao.VacationDao;
 import com.myit.model.VacationDTO;
 import com.myit.service.VacationService;
+import org.activiti.bpmn.model.BpmnModel;
+import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
+import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -30,6 +36,8 @@ public class VacationServiceImpl implements VacationService {
     private RuntimeService runtimeService;
     @Autowired
     private TaskService taskService;
+    @Autowired
+    private ProcessEngine processEngine;
 
     private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
@@ -58,5 +66,31 @@ public class VacationServiceImpl implements VacationService {
         taskService.complete(task.getId(), vars, false);
 
         this.vacationDao.insertVacationDTO(vacation);
+    }
+
+    @Override
+    public InputStream getDiagram(String processInstanceId) {
+        ProcessInstance processInstance = this.runtimeService
+                .createProcessInstanceQuery()
+                .processInstanceId(processInstanceId).singleResult();
+
+        ProcessDefinition processDefinition = this.repositoryService
+                .createProcessDefinitionQuery()
+                .processDefinitionId(processInstance.getProcessDefinitionId())
+                .singleResult();
+
+        BpmnModel bpmnModel = this.repositoryService.getBpmnModel(processDefinition.getId());
+
+        String fontName = "宋体";
+
+        List<String> currentActs = this.runtimeService.getActiveActivityIds(processInstance.getId());
+
+        InputStream inputStream = this.processEngine
+                .getProcessEngineConfiguration()
+                .getProcessDiagramGenerator()
+                .generateDiagram(bpmnModel, "png", currentActs,
+                        new ArrayList<String>(), fontName, fontName, fontName, null, 1.0);
+
+        return inputStream;
     }
 }

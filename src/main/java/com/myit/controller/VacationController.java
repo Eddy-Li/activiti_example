@@ -3,6 +3,7 @@ package com.myit.controller;
 import com.myit.controller.vo.VacationFormVO;
 import com.myit.service.VacationService;
 import com.myit.utils.ResultCode;
+import org.activiti.bpmn.converter.EndEventXMLConverter;
 import org.activiti.engine.IdentityService;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
@@ -14,8 +15,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -99,6 +107,49 @@ public class VacationController {
             result.put("msg", ResultCode.EXCEPTION.getMsg());
         }
         return result;
+    }
+
+    @RequestMapping(value = "/showDiagram.do", method = RequestMethod.POST)
+    public Map<String, Object> showDiagram(HttpServletResponse response, @RequestBody VacationFormVO vacationFormVO) {
+        Map<String, Object> result = new HashMap<>();
+        String processInstanceId = vacationFormVO.getProcessInstanceId();
+        if (StringUtils.isAnyBlank(processInstanceId)) {
+            result.put("code", ResultCode.PARAM_ERROR.getCode());
+            result.put("msg", ResultCode.PARAM_ERROR.getMsg());
+            return result;
+        }
+
+        OutputStream outputStream = null;
+        try {
+            InputStream inputStream = this.vacationService.getDiagram(processInstanceId);
+            //response.setContentType(MediaType.MULTIPART_FORM_DATA_VALUE + ";" + "charset=UTF-8");
+            response.setContentType("multipart/form-data;charset=UTF-8");
+            outputStream = response.getOutputStream();
+            outputStream.write(this.getImgByte(inputStream));
+            outputStream.flush();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                if (outputStream != null) {
+                    outputStream.close();
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+        return null;
+    }
+
+    private byte[] getImgByte(InputStream inputStream) throws IOException {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        int b;
+        while ((b = inputStream.read()) != -1) {
+            byteArrayOutputStream.write(b);
+        }
+        byte[] bytes = byteArrayOutputStream.toByteArray();
+        byteArrayOutputStream.close();
+        return bytes;
     }
 
 

@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 
 @Setter
 @Getter
@@ -33,4 +32,6 @@ public class VacationFormVO implements Serializable {
     private String processId;
 
     private String userId;
+
+    private String processInstanceId;
 }
