@@ -104,7 +104,8 @@ public class VacationController {
         return result;
     }
 
-    @RequestMapping(value = "/showDiagram.do", method = RequestMethod.GET)
+    //显示流程实例的流程图、及当前节点高亮显示
+  @RequestMapping(value = "/showDiagram.do", method = RequestMethod.GET)
     public String showDiagram(HttpServletResponse response,
                               @RequestParam("processInstanceId") String processInstanceId) {
 
