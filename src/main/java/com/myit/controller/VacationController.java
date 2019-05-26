@@ -3,7 +3,6 @@ package com.myit.controller;
 import com.myit.controller.vo.VacationFormVO;
 import com.myit.service.VacationService;
 import com.myit.utils.ResultCode;
-import org.activiti.bpmn.converter.EndEventXMLConverter;
 import org.activiti.engine.IdentityService;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
@@ -15,7 +14,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
