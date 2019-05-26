@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin</title>
+    <script src="libs/jquery-2.0.0.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#table").empty();
+            //
+            $('#insertUser').click(function () {
+                var id = $("#id").val();
+                var lastName = $("#lastName").val();
+                var password = $("#password").val();
+                var email = $("#email").val();
+                var user = {
+                    id: id,
+                    lastName: lastName,
+                    password: password,
+                    email: email
+                };
+                $.ajax({
+                    url: '/AdminController/addUser.do',
+                    type: 'POST',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    data: JSON.stringify(user),
+                    success: function (data) {
+                        console.log(data);
+                        alert(data['msg']);
+                    }
+                });
+            });
+            //
+            $('#displayUsers').click(function () {
+                $("#table").empty();
+                $.ajax({
+                    url: '/AdminController/displayUsers.do',
+                    type: 'GET',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    success: function (data) {
+                        console.log(data);
+                        // alert(data['msg']);
+                        var userList = data['data'];
+                        for (var i = 0; i < userList.length; i++) {
+                            var lastName = userList[i]['lastName'];
+                            var id = userList[i]['id'];
+                            var email = userList[i]['email'];
+                            var str = "姓名: " + lastName + "&nbsp;&nbsp;" +
+                                "身份证: " + id + "&nbsp;&nbsp;" +
+                                "邮件: " + email + "<br/>";
+                            $("#table").append(str);
+                        }
+                    }
+                });
+            });
+            //
+            $('#deleteUser').click(function () {
+                var id = $("#deleteId").val();
+                $.ajax({
+                    url: '/AdminController/deleteUser.do',
+                    type: 'GET',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    data: {
+                        id: id
+                    },
+                    success: function (data) {
+                        console.log(data);
+                        alert(data['msg']);
+                    }
+                });
+            });
+            //
+            $('#insertGroup').click(function () {
+                var groupId = $("#groupId").val();
+                var groupName = $("#groupName").val();
+                var type = $("#type").val();
+                var group = {
+                    id: groupId,
+                    name: groupName,
+                    type: type
+                };
+                $.ajax({
+                    url: '/AdminController/addGroup.do',
+                    type: 'POST',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    data: JSON.stringify(group),
+                    success: function (data) {
+                        console.log(data);
+                        alert(data['msg']);
+                    }
+                });
+            });
+            //
+            $('#createMemberShip').click(function () {
+                var newUserId = $("#newUserId").val();
+                var newGroupId = $("#newGroupId").val();
+                var memberShip = {
+                    userId: newUserId,
+                    groupId: newGroupId
+                };
+                $.ajax({
+                    url: '/AdminController/createMemberShip.do',
+                    type: 'POST',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    data: JSON.stringify(memberShip),
+                    success: function (data) {
+                        console.log(data);
+                        alert(data['msg']);
+                    }
+                });
+            });
+            //
+            $('#deleteGroup').click(function () {
+                var id = $("#deleteGroupId").val();
+                $.ajax({
+                    url: '/AdminController/deleteGroup.do',
+                    type: 'GET',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    data: {
+                        id: id
+                    },
+                    success: function (data) {
+                        console.log(data);
+                        alert(data['msg']);
+                    }
+                });
+            });
+            //
+            $('#deleteMemberShip').click(function () {
+                var deleteMemberShipGroupId = $("#deleteMemberShipGroupId").val();
+                var deleteMemberShipUserId = $("#deleteMemberShipUserId").val();
+                var memberShip = {
+                    groupId: deleteMemberShipGroupId,
+                    userId: deleteMemberShipUserId
+                };
+                $.ajax({
+                    url: '/AdminController/deleteMemberShip.do',
+                    type: 'POST',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    data: JSON.stringify(memberShip),
+                    success: function (data) {
+                        console.log(data);
+                        alert(data['msg']);
+                    }
+                });
+            });
+            //
+            $('#displayGroups').click(function () {
+                $("#groups").empty();
+                $.ajax({
+                    url: '/AdminController/displayGroups.do',
+                    type: 'GET',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    success: function (data) {
+                        console.log(data);
+                        // alert(data['msg']);
+                        var groupList = data['data'];
+                        for (var i = 0; i < groupList.length; i++) {
+                            var name = groupList[i]['name'];
+                            var id = groupList[i]['id'];
+                            var type = groupList[i]['type'];
+                            var str = "用户组名: " + name + "&nbsp;&nbsp;" +
+                                "用户组id: " + id + "&nbsp;&nbsp;" +
+                                "用户组类型: " + type + "<br/>";
+                            $("#groups").append(str);
+                        }
+                    }
+                });
+            });
+            //
+            $('#displayAllUsersOfGroup').click(function () {
+                $("#users").empty();
+                var groupId = $("#groupIdOfDisplayAllUsers").val();
+                $.ajax({
+                    url: '/AdminController/displayAllUsersOfGroup.do',
+                    type: 'GET',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    data: {
+                        groupId: groupId
+                    },
+                    success: function (data) {
+                        console.log(data);
+                        // alert(data['msg']);
+                        var userList = data['data'];
+                        for (var i = 0; i < userList.length; i++) {
+                            var lastName = userList[i]['lastName'];
+                            var id = userList[i]['id'];
+                            var email = userList[i]['email'];
+                            var str = "姓名: " + lastName + "&nbsp;&nbsp;" +
+                                "身份证: " + id + "&nbsp;&nbsp;" +
+                                "邮件: " + email + "<br/>";
+                            $("#users").append(str);
+                        }
+                    }
+                });
+            });
+
+
+            //
+        })
+    </script>
+</head>
+<body>
+<div>
+    <p style="font-weight: bold;color: blue">1.新增用户</p>
+    <p>姓&nbsp;&nbsp;&nbsp;名<input type="text" id="lastName"/></p>
+    <p>身份证<input type="text" id="id"/></p>
+    <p>密&nbsp;&nbsp;&nbsp;码<input type="text" id="password"/></p>
+    <p>邮&nbsp;&nbsp;&nbsp;件<input type="text" id="email"/></p>
+    <button type="button" id="insertUser">提交</button>
+    <br/>
+</div>
+<div>
+    <p style="font-weight: bold;color: blue">2.显示用户
+        <button type="button" id="displayUsers">显示</button>
+    </p>
+    <div id="table"></div>
+</div>
+<div>
+    <p style="font-weight: bold;color: blue;">3.删除用户</p>
+    <p>身份证<input type="text" id="deleteId"/></p>
+    <button type="button" id="deleteUser">提交</button>
+</div>
+<div>
+    <p style="font-weight: bold;color: blue">4.新增用户组</p>
+    <p>组&nbsp;&nbsp;&nbsp;名<input type="text" id="groupName"/></p>
+    <p>组&nbsp;&nbsp;&nbsp;id<input type="text" id="groupId"/></p>
+    <p>组类型<input type="text" id="type"/></p>
+    <button type="button" id="insertGroup">提交</button>
+    <br/>
+</div>
+<div>
+    <p style="font-weight: bold;color: blue;">5.删除用户组</p>
+    <p>组id<input type="text" id="deleteGroupId"/></p>
+    <button type="button" id="deleteGroup">提交</button>
+</div>
+<div>
+    <p style="font-weight: bold;color: blue">6.用户加入用户组</p>
+    <p>用户&nbsp;id<input type="text" id="newUserId"/></p>
+    <p>组&nbsp;&nbsp;&nbsp;id<input type="text" id="newGroupId"/></p>
+    <button type="button" id="createMemberShip">提交</button>
+    <br/>
+</div>
+<div>
+    <p style="font-weight: bold;color: blue;">7.从用户组移除用户</p>
+    <p>用户&nbsp;id<input type="text" id="deleteMemberShipUserId"/></p>
+    <p>组&nbsp;&nbsp;&nbsp;id<input type="text" id="deleteMemberShipGroupId"/></p>
+    <button type="button" id="deleteMemberShip">提交</button>
+</div>
+<div>
+    <p style="font-weight: bold;color: blue">8.显示所有用户组
+        <button type="button" id="displayGroups">显示</button>
+    </p>
+    <div id="groups"></div>
+</div>
+<div>
+    <p style="font-weight: bold;color: blue">9.显示用户组的所有用户</p>
+    <p>组&nbsp;&nbsp;&nbsp;id<input type="text" id="groupIdOfDisplayAllUsers"/></p>
+    <button type="button" id="displayAllUsersOfGroup">显示</button>
+    <div id="users"></div>
+</div>
+</body>
+</html>

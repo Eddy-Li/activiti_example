@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+
+    <!-- ==============================================数据库=============================+========================== -->
+    <!-- =========================================================================================================== -->
+    <!--数据源-->
+    <bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource">
+        <property name="driverClassName" value="${jdbc.database.driverClass}"/>
+        <property name="url" value="${jdbc.database.url}"/>
+        <property name="username" value="${jdbc.database.username}"/>
+        <property name="password" value="${jdbc.database.password}"/>
+        <property name="maxTotal" value="${jdbc.database.maxTotal}"/>
+        <property name="maxIdle" value="${jdbc.database.maxIdle}"/>
+        <property name="minIdle" value="${jdbc.database.minIdle}"/>
+        <property name="maxWaitMillis" value="${jdbc.database.maxWaitMillis}"/>
+        <property name="initialSize" value="${jdbc.database.initialSize}"/>
+    </bean>
+
+    <!-- 配置事务管理器 -->
+    <bean id="dataSourceTransactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+    <tx:annotation-driven transaction-manager="dataSourceTransactionManager"/>
+
+</beans>

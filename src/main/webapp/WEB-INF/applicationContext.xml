@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+                           http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+                           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <context:annotation-config/>
+    <context:component-scan base-package="com.myit"/>
+    <!--启用aop:aspectj框架的自动代理,基于注解的方式需要在xml文件中加入如下配置,使AspectJ注解起作用：自动为匹配的类生成代理对象-->
+    <aop:aspectj-autoproxy/>
+
+    <!--spring mvc注解驱动-->
+    <mvc:annotation-driven/>
+
+    <!--使用默认的Servlet来响应静态文件-->
+    <mvc:default-servlet-handler/>
+    <!-- ============================================Spring MVC===================================================== -->
+    <!-- =========================================================================================================== -->
+    <!-- =================@ResponseBody===================== -->
+    <bean id="mappingJackson2HttpMessageConverter"
+          class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+        <property name="supportedMediaTypes">
+            <list>
+                <value>application/json;charset=UTF-8</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+        <property name="messageConverters">
+            <list>
+                <ref bean="mappingJackson2HttpMessageConverter"/>
+            </list>
+        </property>
+    </bean>
+
+    <!-- ==================================加载properties配置文件=========================+========================== -->
+    <!-- =========================================================================================================== -->
+    <!--加载properties配置文件-->
+    <!--在此xml引用方式为<property name="username" value="${jdbc.database.username}"/>-->
+    <!--在类的字段上引用方式为@Value("${jdbc.database.username}")-->
+    <bean id="propertyPlaceholderConfigurer"
+          class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations">
+            <array>
+                                <value>classpath:db.properties</value>
+            </array>
+        </property>
+    </bean>
+
+    <import resource="dataSource.xml"/>
+    <import resource="activiti.xml"/>
+    <import resource="mybatisConfig.xml"/>
+</beans>

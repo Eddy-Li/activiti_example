@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <settings>
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+        <setting name="jdbcTypeForNull" value="NULL"/>
+        <!-- 分步查询时，按需加载 -->
+        <setting name="lazyLoadingEnabled" value="true"/>
+        <setting name="aggressiveLazyLoading" value="false"/>
+        <!--开启mybatis日志-->
+        <setting name="logImpl" value="STDOUT_LOGGING"/>
+
+    </settings>
+    <plugins>
+        <!--
+            分页插件
+                重要提示：
+                PageHelper.startPage方法重要提示
+                只有紧跟在PageHelper.startPage方法后的第一个Mybatis的查询（Select）方法会被分页。
+
+                请不要配置多个分页插件
+                请不要在系统中配置多个分页插件(使用Spring时,mybatis-config.xml和Spring<bean>配置方式，请选择其中一种，不要同时配置多个分页插件)！
+
+                分页插件不支持带有for update语句的分页
+                对于带有for update的sql，会抛出运行时异常，对于这样的sql建议手动分页，毕竟这样的sql需要重视。
+
+                分页插件不支持嵌套结果映射
+                由于嵌套结果方式会导致结果集被折叠，因此分页查询的结果在折叠后总数会减少，所以无法保证分页结果数量正确。-->
+        <plugin interceptor="com.github.pagehelper.PageInterceptor">
+            <!--helperDialect：分页插件会自动检测当前的数据库链接，自动选择合适的分页方式。
+                你可以配置helperDialect属性来指定分页插件使用哪种数据库。配置时，可以使用下面的缩写值：
+                oracle,mysql,mariadb,sqlite,hsqldb,postgresql,db2,sqlserver,informix,h2,sqlserver2012,derby
+                特别注意：使用 SqlServer2012 数据库时，需要手动指定为 sqlserver2012，否则会使用 SqlServer2005 的方式进行分页。-->
+            <property name="helperDialect" value="mysql"/>
+            <!--reasonable：分页合理化参数，默认值为false。
+                当该参数设置为 true 时，pageNum<=0 时会查询第一页，
+                pageNum>pages（超过总数时），会查询最后一页。默认false 时，直接根据参数进行查询。-->
+            <property name="reasonable" value="true"/>
+            <!--多数据源时，注意如下：-->
+            <!--如果你在 Spring 中配置了动态数据源，并且连接不同类型的数据库，这时你可以配置 autoRuntimeDialect 为 true，
+                这样在使用不同数据源时，会使用匹配的分页进行查询。 这种情况下，你还需要特别注意 closeConn 参数，
+                由于获取数据源类型会获取一个数据库连接，所以需要通过这个参数来控制获取连接后，是否关闭该连接。
+                默认为 true，有些数据库连接关闭后就没法进行后续的数据库操作。而有些数据库连接不关闭就会很快由于连接数用完
+                而导致数据库无响应。所以在使用该功能时，特别需要注意你使用的数据源是否需要关闭数据库连接。当不使用动态数据
+                源而只是自动获取 helperDialect 时，数据库连接只会获取一次，所以不需要担心占用的这一个连接是否会导致数据库出错，
+                但是最好也根据数据源的特性选择是否关闭连接。-->
+            <!--closeConn：默认值为 true。当使用运行时动态数据源或没有设置 helperDialect 属性自动获取数据库类型时，
+                会自动获取一个数据库连接， 通过该属性来设置是否关闭获取的这个连接，默认true关闭，设置为 false 后，
+                不会关闭获取的连接，这个参数的设置要根据自己选择的数据源来决定。-->
+            <!--autoRuntimeDialect：默认值为 false。设置为 true 时，允许在运行时根据多数据源自动识别对应方言的分页
+                （不支持自动选择sqlserver2012，只能使用sqlserver）-->
+        </plugin>
+    </plugins>
+</configuration>

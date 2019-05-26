@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="configLocation" value="classpath:mybatis-config.xml"/>
+        <property name="mapperLocations" value="classpath:mappers/*.xml"/>
+    </bean>
+
+    <!--通过扫描的形式配置Mapper类,并注入到spring ioc容器中-->
+    <bean id="mapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <!--同时也会扫描子包，多个包时可以用","相隔-->
+        <property name="basePackage" value="com.myit.dao"/>
+        <!-- bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean" -->
+        <!--value的值是SqlSessionFactoryBean的name，即id-->
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
+        <!--指定标注了指定注解时才扫描为Mapper-->
+        <property name="annotationClass" value="org.springframework.stereotype.Repository"/>
+    </bean>
+</beans>

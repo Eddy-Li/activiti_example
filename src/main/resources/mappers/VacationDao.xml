@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.myit.dao.VacationDao">
+
+    <insert id="insertVacationDTO">
+        INSERT INTO OA_VACATION(WORK_DAYS,
+                                BEGIN_DATE,
+                                END_DATE,
+                                VAC_TYPE,
+                                REASON,
+                                PROC_INST_ID,
+                                USER_ID)
+        VALUES (#{vacation.workDays},
+                #{vacation.beginDate},
+                #{vacation.endDate},
+                #{vacation.vacType},
+                #{vacation.reason},
+                #{vacation.procInstId},
+                #{vacation.userId})
+    </insert>
+</mapper>

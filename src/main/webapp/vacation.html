@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>请假</title>
+    <script src="libs/jquery-2.0.0.min.js"></script>
+    <script src="libs/My97DatePicker/WdatePicker.js"></script>
+    <link rel="stylesheet" href="libs/bootstrap/bootstrap.min.css">
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $.ajax({
+                url: '/VacationController/getAllProcess.do',
+                type: 'GET',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    console.log(data);
+                    var formTypeList = data['data'];
+                    for (var i = 0; i < formTypeList.length; i++) {
+                        var name = formTypeList[i]['name'];
+                        var id = formTypeList[i]['id'];
+                        var key = formTypeList[i]['key'];
+                        var option = "<option value=" + id + ">" + name + "</option>";
+                        $("#formType").append(option);
+                    }
+                }
+            });
+            //
+            $('#submitVacationForm').click(function () {
+                var userId = $("#userId").val();
+                var startTime = $("#startTime").val();
+                var endTime = $("#endTime").val();
+                var days = $("#days").val();
+                var vacationType = $("#vacationType").val();
+                var reason = $("#reason").val();
+                var processId = $("#formType").val();
+                var form = {
+                    userId: userId,
+                    beginDate: startTime,
+                    endDate: endTime,
+                    workDays: days,
+                    vacType: vacationType,
+                    reason: reason,
+                    processId: processId
+                };
+                $.ajax({
+                    url: '/VacationController/startVacationProcess.do',
+                    type: 'POST',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    data: JSON.stringify(form),
+                    success: function (data) {
+                        console.log(data);
+                        alert(data['msg']);
+                    }
+                });
+            });
+
+            //
+        })
+    </script>
+</head>
+<body>
+<div>
+    <br>
+    <label for="formType">选择表单</label>
+    <select id="formType"></select>
+</div>
+<div>
+    <br>
+</div>
+<p>1.休假用户id</p>
+<input type="text" id="userId">
+<p>2.开始日期</p>
+<input type="text" id="startTime" style='height:40px;width:180px'
+       class="form-control Wdate"
+       onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss',skin:'blue'})" value="2008-10-10 00:00:00"/>
+<br/>
+<p>3.结束日期</p>
+<input type="text" id="endTime" style='height:40px;width:180px'
+       class="form-control Wdate"
+       onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss',skin:'blue'})" value="2008-10-10 00:00:00"/>
+<br/>
+<p>4.请假天数</p>
+<input type="text" id="days">
+<br>
+<br>
+<p>5.休假类型</p>
+<select id="vacationType">
+    <option value="0">带薪假</option>
+    <option value="1">病假</option>
+    <option value="2">事假</option>
+</select>
+<br>
+<br>
+<p>6.请假原因</p>
+<input type="text" id="reason">
+<br>
+<br>
+<button type="button" id="submitVacationForm">提交请假单</button>
+</body>
+</html>

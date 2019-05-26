@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.myit.dao.StudentDao">
+
+    <!--<resultMap id="studentMap" type="com.myit.model.Student">-->
+        <!--&lt;!&ndash;id标签：表示表中的主键&ndash;&gt;-->
+        <!--<id property="id" column="id"/>-->
+        <!--&lt;!&ndash;result标签：代表表中的其他列&ndash;&gt;-->
+        <!--&lt;!&ndash;property属性：pojo中的字段&ndash;&gt;-->
+        <!--&lt;!&ndash;column属性：表中的列&ndash;&gt;-->
+        <!--<result property="name" column="name"/>-->
+        <!--&lt;!&ndash;可以指定jdbcType、javaType或者typeHandler，二选一都可以&ndash;&gt;-->
+        <!--&lt;!&ndash;一般时都会自动探测使用哪种类型处理器，当是枚举类型时，需要自定义类型处理器&ndash;&gt;-->
+        <!--&lt;!&ndash;当指定jdbcType、javaType时，mybatis会选用对应的类型处理器&ndash;&gt;-->
+        <!--<result property="sex" column="sex" typeHandler="com.myit.mybatis.typerhandler.SexEnumTypeHandler"/>-->
+        <!--<result property="age" column="age"/>-->
+        <!--<result property="classAndGrade" column="class"/>-->
+        <!--<result property="studentNumber" column="student_number"/>-->
+        <!--<result property="version" column="version"/>-->
+    <!--</resultMap>-->
+    <!--&lt;!&ndash;parameterType:传进sql中的java参数类型,一般省略&ndash;&gt;-->
+    <!--&lt;!&ndash;resultType：sql查询结果传给java的java类型&ndash;&gt;-->
+    <!--&lt;!&ndash;传参数时用#{}，分表时使用${}，select * from ${year}_salary&ndash;&gt;-->
+    <!--&lt;!&ndash;配置了studentMap，就不能配置resultType&ndash;&gt;-->
+    <!--<select id="getStudentByStudentNumber" parameterType="String" resultMap="studentMap">-->
+        <!--SELECT id,name,sex,age,class,student_number,version FROM tab_student WHERE student_number=#{studentNumber}-->
+    <!--</select>-->
+
+    <!--<select id="getStudentsByStudentNumbers" resultMap="studentMap">-->
+        <!--SELECT id,name,sex,age,class,student_number,version FROM tab_student WHERE student_number IN-->
+        <!--<foreach collection="studentNumbers" item="item" open="(" close=")" separator="," index="index">-->
+            <!--#{item}-->
+        <!--</foreach>-->
+    <!--</select>-->
+
+    <!--&lt;!&ndash;自增主键回填：useGeneratedKeys="true" keyProperty="id"，此方法支队mysql有用&ndash;&gt;-->
+    <!--&lt;!&ndash;没成功回填主键，需要找原因&ndash;&gt;-->
+    <!--&lt;!&ndash;oracle使用selectKey标签方法&ndash;&gt;-->
+    <!--<insert id="insertStudent" useGeneratedKeys="true" keyProperty="id">-->
+        <!--INSERT INTO tab_student (name, sex, age, class, student_number)-->
+        <!--VALUES (#{student.name},#{student.sex},#{student.age},#{student.classAndGrade},#{student.studentNumber})-->
+    <!--</insert>-->
+
+    <!--<select id="isExistStudentByStudentNumber" resultType="int">-->
+      <!--SELECT COUNT(student_number) FROM tab_student WHERE student_number=#{studentNumber}-->
+    <!--</select>-->
+
+
+    <!--<select id="getStudentsByClass" resultMap="studentMap">-->
+        <!--SELECT id,name,sex,age,class,student_number,version FROM tab_student WHERE class=#{classAndGrade}-->
+    <!--</select>-->
+
+    <!--<delete id="deleteStudentByStudentNumber">-->
+        <!--DELETE FROM tab_student WHERE student_number=#{studentNumber}-->
+    <!--</delete>-->
+
+    <!--&lt;!&ndash;Integer updateStudent(@Param("student") Student student, @Param("version") Integer version);&ndash;&gt;-->
+    <!--&lt;!&ndash;SQL中取参数：#{student.studentNumber},#{version},即名称为@Param注解的值&ndash;&gt;-->
+    <!--&lt;!&ndash;el表达式中取参数student，student.studentNumber，version，即名称为@Param注解的值，不需要#{}&ndash;&gt;-->
+    <!--<update id="updateStudent">-->
+        <!--UPDATE test.tab_student-->
+        <!--<set>-->
+            <!--<if test="student.name != null and !''.equals(student.name.trim())">-->
+                <!--name = #{student.name},-->
+            <!--</if>-->
+            <!--<if test="student.sex != null">-->
+                <!--sex = #{student.sex},-->
+            <!--</if>-->
+            <!--<if test="student.age != 0">-->
+                <!--age = #{student.age},-->
+            <!--</if>-->
+            <!--<if test="student.classAndGrade != null and !''.equals(student.classAndGrade.trim())">-->
+                <!--class = #{student.classAndGrade},-->
+            <!--</if>-->
+            <!--<if test="student.studentNumber != null and !''.equals(student.studentNumber.trim())">-->
+                <!--student_number = #{student.studentNumber},-->
+            <!--</if>-->
+            <!--<if test="1 == 1">-->
+                <!--version = version+1-->
+            <!--</if>-->
+        <!--</set>-->
+        <!--WHERE student_number=#{student.studentNumber} AND version=#{version}-->
+    <!--</update>-->
+</mapper>
