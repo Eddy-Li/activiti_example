@@ -13,10 +13,7 @@ import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.repository.ProcessDefinitionQuery;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -109,15 +106,9 @@ public class VacationController {
         return result;
     }
 
-    @RequestMapping(value = "/showDiagram.do", method = RequestMethod.POST)
-    public Map<String, Object> showDiagram(HttpServletResponse response, @RequestBody VacationFormVO vacationFormVO) {
-        Map<String, Object> result = new HashMap<>();
-        String processInstanceId = vacationFormVO.getProcessInstanceId();
-        if (StringUtils.isAnyBlank(processInstanceId)) {
-            result.put("code", ResultCode.PARAM_ERROR.getCode());
-            result.put("msg", ResultCode.PARAM_ERROR.getMsg());
-            return result;
-        }
+    @RequestMapping(value = "/showDiagram.do", method = RequestMethod.GET)
+    public String showDiagram(HttpServletResponse response,
+                              @RequestParam("processInstanceId") String processInstanceId) {
 
         OutputStream outputStream = null;
         try {

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>查看请假单</title>
+    <script src="libs/jquery-2.0.0.min.js"></script>
+    <script src="libs/My97DatePicker/WdatePicker.js"></script>
+    <link rel="stylesheet" href="libs/bootstrap/bootstrap.min.css">
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#viewProcess').click(function () {
+                $("#img").empty();
+                var processInstanceId = $("#processInstanceId").val();
+                var str = "<img src=\"http://localhost:8080/VacationController/showDiagram.do?processInstanceId="
+                    + processInstanceId + "\">";
+                $("#img").append(str);
+
+            });
+        })
+    </script>
+</head>
+<body>
+<p>1.查看请假单流程图</p>
+<p>流程实例id<input type="text" id="processInstanceId"></p>
+<button type="button" id="viewProcess">显示</button>
+<div id="img">
+    <img src="">
+</div>
+</body>
+</html>
