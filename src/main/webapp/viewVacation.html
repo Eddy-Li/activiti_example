@@ -16,15 +16,144 @@
                 $("#img").append(str);
 
             });
+
+            //
+            $('#displayProcess_2').click(function () {
+                $("#process_2").empty();
+                var userId = $("#userId_2").val();
+                var param = {
+                    userId: userId
+                };
+                $.ajax({
+                    url: '/VacationController/queryApplyProcessList.do',
+                    type: 'POST',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    data: JSON.stringify(param),
+                    success: function (data) {
+                        console.log(data);
+                        // alert(data['msg']);
+                        var processList = data['data'];
+                        for (var i = 0; i < processList.length; i++) {
+                            var workDays = processList[i]['workDays'];
+                            var beginDate = processList[i]['beginDate'];
+                            var endDate = processList[i]['endDate'];
+                            var vacType = processList[i]['vacType'];
+                            var reason = processList[i]['reason'];
+                            var procInstId = processList[i]['procInstId'];
+                            var str = "workDays: " + workDays + "&nbsp;&nbsp;" +
+                                "beginDate: " + beginDate + "&nbsp;&nbsp;" +
+                                "endDate: " + endDate + "&nbsp;&nbsp;" +
+                                "vacType: " + vacType + "&nbsp;&nbsp;" +
+                                "reason: " + reason + "&nbsp;&nbsp;" +
+                                "procInstId: " + procInstId + "<br/>";
+                            $("#process_2").append(str);
+                        }
+                    }
+                });
+            });
+            //
+            $('#displayProcess_3').click(function () {
+                $("#process_3").empty();
+                var userId = $("#userId_3").val();
+                var param = {
+                    userId: userId
+                };
+                $.ajax({
+                    url: '/VacationController/queryToApprovalProcessList.do',
+                    type: 'POST',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    data: JSON.stringify(param),
+                    success: function (data) {
+                        console.log(data);
+                        // alert(data['msg']);
+                        var processList = data['data'];
+                        for (var i = 0; i < processList.length; i++) {
+                            var workDays = processList[i]['workDays'];
+                            var beginDate = processList[i]['beginDate'];
+                            var endDate = processList[i]['endDate'];
+                            var vacType = processList[i]['vacType'];
+                            var reason = processList[i]['reason'];
+                            var procInstId = processList[i]['procInstId'];
+                            var taskId = processList[i]['taskId'];
+                            var str = "workDays: " + workDays + "&nbsp;&nbsp;" +
+                                "beginDate: " + beginDate + "&nbsp;&nbsp;" +
+                                "endDate: " + endDate + "&nbsp;&nbsp;" +
+                                "vacType: " + vacType + "&nbsp;&nbsp;" +
+                                "reason: " + reason + "&nbsp;&nbsp;" +
+                                "taskId: " + taskId + "&nbsp;&nbsp;" +
+                                "procInstId: " + procInstId + "<br/>";
+                            $("#process_3").append(str);
+                        }
+                    }
+                });
+            });
+            //
+            $('#approvalProcess_4').click(function () {
+                var userId = $("#userId_4").val();
+                var taskId = $("#taskId_4").val();
+                var processInstanceId = $("#processInstanceId_4").val();
+                var opinion = $("#opinion_4").val();
+                var comment = $("#comment_4").val();
+                var param = {
+                    userId: userId,
+                    taskId: taskId,
+                    processInstanceId: processInstanceId,
+                    opinion: opinion,
+                    comment: comment
+                };
+                $.ajax({
+                    url: '/VacationController/approvalProcess.do',
+                    type: 'POST',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    data: JSON.stringify(param),
+                    success: function (data) {
+                        console.log(data);
+                        alert(data['msg']);
+                    }
+                });
+            });
+
+
+            //
         })
     </script>
 </head>
 <body>
-<p>1.查看请假单流程图</p>
-<p>流程实例id<input type="text" id="processInstanceId"></p>
-<button type="button" id="viewProcess">显示</button>
-<div id="img">
-    <img src="">
+<div>
+    <p style="font-weight: bold;color: blue">1.查看请假单流程图</p>
+    <p>流程实例id<input type="text" id="processInstanceId"></p>
+    <button type="button" id="viewProcess">显示</button>
+    <div id="img">
+        <img src="">
+    </div>
 </div>
+<div>
+    <p style="font-weight: bold;color: blue">2.显示用户当前申请的流程</p>
+    <p>用户id<input type="text" id="userId_2"/></p>
+    <button type="button" id="displayProcess_2">显示</button>
+    <div id="process_2"></div>
+</div>
+<div>
+    <p style="font-weight: bold;color: blue">3.显示用户当前待审批的流程</p>
+    <p>用户id<input type="text" id="userId_3"/></p>
+    <button type="button" id="displayProcess_3">显示</button>
+    <div id="process_3"></div>
+</div>
+<div>
+    <p style="font-weight: bold;color: blue">4.审批流程</p>
+    <p>用户id<input type="text" id="userId_4"/></p>
+    <p>任务id<input type="text" id="taskId_4"/></p>
+    <p>流程实例id<input type="text" id="processInstanceId_4"/></p>
+    <select id="opinion_4">
+        <option value="1">同意</option>
+        <option value="2">不同意</option>
+    </select>
+    <p>评论<input type="text" id="comment_4"/></p>
+    <button type="button" id="approvalProcess_4">显示</button>
+</div>
+
 </body>
 </html>

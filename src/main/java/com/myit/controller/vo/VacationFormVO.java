@@ -36,4 +36,12 @@ public class VacationFormVO implements Serializable {
     private String userId;
 
     private String processInstanceId;
+
+    //意见 1:同意 2:不同意
+    private String opinion;
+    //评论
+    private String comment;
+
+    private String taskId;
+
 }

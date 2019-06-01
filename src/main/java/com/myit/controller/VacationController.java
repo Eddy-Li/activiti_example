@@ -150,8 +150,8 @@ public class VacationController {
     }
 
     //根据用户id，获取申请的流程列表
-    @RequestMapping(value = "/queryApplyProcessList.do", method = RequestMethod.PUT)
-    public String queryApplyProcessList(@RequestParam VacationFormVO vacationFormVO) {
+    @RequestMapping(value = "/queryApplyProcessList.do", method = RequestMethod.POST)
+    public Map<String, Object> queryApplyProcessList(@RequestBody VacationFormVO vacationFormVO) {
         Map<String, Object> result = new HashMap<>();
 
         String userId = vacationFormVO.getUserId();
@@ -159,7 +159,7 @@ public class VacationController {
         if (StringUtils.isAnyBlank(userId)) {
             result.put("code", ResultCode.PARAM_ERROR.getCode());
             result.put("msg", ResultCode.PARAM_ERROR.getMsg());
-            return JSON.toJSONString(result, SerializerFeature.WRITE_MAP_NULL_FEATURES);
+            return result;
         }
         try {
             List<Map<String, Object>> data = this.vacationService.queryApplyProcessList(userId);
@@ -172,7 +172,65 @@ public class VacationController {
             result.put("code", ResultCode.EXCEPTION.getCode());
             result.put("msg", ResultCode.EXCEPTION.getMsg());
         }
-        return JSON.toJSONString(result, SerializerFeature.WRITE_MAP_NULL_FEATURES);
+        return result;
     }
+
+    //根据用户id，获取待审批的流程列表
+    @RequestMapping(value = "/queryToApprovalProcessList.do", method = RequestMethod.POST)
+    public Map<String, Object> queryToApprovalProcessList(@RequestBody VacationFormVO vacationFormVO) {
+        Map<String, Object> result = new HashMap<>();
+
+        String userId = vacationFormVO.getUserId();
+
+        if (StringUtils.isAnyBlank(userId)) {
+            result.put("code", ResultCode.PARAM_ERROR.getCode());
+            result.put("msg", ResultCode.PARAM_ERROR.getMsg());
+            return result;
+        }
+        try {
+            List<Map<String, Object>> data = this.vacationService.queryToApprovalProcessList(userId);
+            result.put("data", data);
+            result.put("code", ResultCode.SUCCESS.getCode());
+            result.put("msg", ResultCode.SUCCESS.getMsg());
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            LOGGER.error(ex.getMessage());
+            result.put("code", ResultCode.EXCEPTION.getCode());
+            result.put("msg", ResultCode.EXCEPTION.getMsg());
+        }
+        return result;
+    }
+
+    //审批流程
+    @RequestMapping(value = "/approvalProcess.do", method = RequestMethod.POST)
+    public Map<String, Object> approvalProcess(@RequestBody VacationFormVO vacationFormVO) {
+        Map<String, Object> result = new HashMap<>();
+
+        String userId = vacationFormVO.getUserId();
+        String taskId = vacationFormVO.getTaskId();
+        String opinion = vacationFormVO.getOpinion();
+        String comment = vacationFormVO.getComment();
+        String processInstanceId = vacationFormVO.getProcessInstanceId();
+
+        if (StringUtils.isAnyBlank(userId, taskId, opinion, comment)) {
+            result.put("code", ResultCode.PARAM_ERROR.getCode());
+            result.put("msg", ResultCode.PARAM_ERROR.getMsg());
+            return result;
+        }
+        try {
+            this.vacationService.approvalProcess(userId, taskId, processInstanceId, opinion, comment);
+            result.put("code", ResultCode.SUCCESS.getCode());
+            result.put("msg", ResultCode.SUCCESS.getMsg());
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            LOGGER.error(ex.getMessage());
+            result.put("code", ResultCode.EXCEPTION.getCode());
+            result.put("msg", ResultCode.EXCEPTION.getMsg());
+        }
+        return result;
+    }
+
+
+
 
 }

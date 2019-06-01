@@ -13,4 +13,8 @@ public interface VacationService {
     InputStream getDiagram(String processInstanceId);
 
     List<Map<String, Object>> queryApplyProcessList(String userId);
+
+    List<Map<String, Object>> queryToApprovalProcessList(String userId);
+
+    void approvalProcess(String userId, String taskId, String processInstanceId, String opinion, String comment);
 }

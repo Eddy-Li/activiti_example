@@ -10,7 +10,6 @@ import org.activiti.engine.*;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,7 +44,6 @@ public class VacationServiceImpl implements VacationService {
     @Override
     public void startVacationProcess(VacationFormVO vacationFormVO) {
         ProcessInstance processInstance = runtimeService.startProcessInstanceById(vacationFormVO.getProcessId());
-
         VacationDTO vacation = new VacationDTO();
         vacation.setWorkDays(Integer.valueOf(vacationFormVO.getWorkDays()));
         vacation.setBeginDate(LocalDateTime.parse(vacationFormVO.getBeginDate(), dateTimeFormatter));
@@ -113,5 +111,35 @@ public class VacationServiceImpl implements VacationService {
             }
         }
         return maps;
+    }
+
+    @Override
+    public List<Map<String, Object>> queryToApprovalProcessList(String userId) {
+        List<Map<String, Object>> maps = new ArrayList<>();
+
+        List<Task> taskList = this.taskService.createTaskQuery().taskAssignee(userId).list();
+        for (Task task : taskList) {
+            String processInstanceId = task.getProcessInstanceId();
+//            ProcessInstance processInstance = this.runtimeService
+//                    .createProcessInstanceQuery()
+//                    .processInstanceId(processInstanceId)
+//                    .singleResult();
+            VacationDTO form = (VacationDTO) this.runtimeService.getVariable(processInstanceId, "form");
+            Map<String, Object> map = (Map<String, Object>) JSON.parseObject(JSON.toJSONString(form), Map.class);
+            map.put("taskId", task.getId());
+            maps.add(map);
+        }
+        return maps;
+    }
+
+    @Override
+    public void approvalProcess(String userId, String taskId, String processInstanceId, String opinion, String comment) {
+//        this.taskService.claim(taskId,userId);
+        this.taskService.addComment(taskId, processInstanceId, "opinion", opinion);
+        this.taskService.addComment(taskId, processInstanceId, "comment", comment);
+        this.taskService.complete(taskId);
+        if ("2".equals(opinion)) {
+            this.runtimeService.deleteProcessInstance(processInstanceId, userId + ":" + comment);
+        }
     }
 }
