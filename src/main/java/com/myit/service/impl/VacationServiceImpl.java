@@ -136,8 +136,10 @@ public class VacationServiceImpl implements VacationService {
     public void approvalProcess(String userId, String taskId, String processInstanceId, String opinion, String comment) {
         this.taskService.addComment(taskId, processInstanceId, "opinion", opinion);
         this.taskService.addComment(taskId, processInstanceId, "comment", comment);
+        //如果同意,则完成任务，流程进入下一个节点
         if ("1".equals(opinion)) {
             this.taskService.complete(taskId);
+            //如果不同意，则结束流程
         } else {
             this.runtimeService.deleteProcessInstance(processInstanceId, userId + ":" + comment);
         }
