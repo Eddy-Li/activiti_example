@@ -1,17 +1,16 @@
 package com.myit.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.myit.controller.vo.VacationFormVO;
 import com.myit.dao.VacationDao;
 import com.myit.model.VacationDTO;
 import com.myit.service.VacationService;
 import org.activiti.bpmn.model.BpmnModel;
-import org.activiti.engine.ProcessEngine;
-import org.activiti.engine.RepositoryService;
-import org.activiti.engine.RuntimeService;
-import org.activiti.engine.TaskService;
+import org.activiti.engine.*;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,6 +37,8 @@ public class VacationServiceImpl implements VacationService {
     private TaskService taskService;
     @Autowired
     private ProcessEngine processEngine;
+    @Autowired
+    private HistoryService historyService;
 
     private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
@@ -92,5 +93,25 @@ public class VacationServiceImpl implements VacationService {
                         new ArrayList<String>(), fontName, fontName, fontName, null, 1.0);
 
         return inputStream;
+    }
+
+    @Override
+    public List<Map<String, Object>> queryApplyProcessList(String userId) {
+        List<VacationDTO> vacationDTOList = this.vacationDao.queryApplyVacationDTO(userId);
+
+        List<Map<String, Object>> maps = new ArrayList<>();
+        for (VacationDTO vacationDTO : vacationDTOList) {
+            ProcessInstance processInstance = this.runtimeService
+                    .createProcessInstanceQuery()
+                    .processInstanceId(vacationDTO.getProcInstId())
+                    .singleResult();
+            if (processInstance != null) {
+                VacationDTO form =
+                        (VacationDTO) this.runtimeService.getVariable(processInstance.getId(), "form");
+                Map map = JSON.parseObject(JSON.toJSONString(form), Map.class);
+                maps.add(map);
+            }
+        }
+        return maps;
     }
 }

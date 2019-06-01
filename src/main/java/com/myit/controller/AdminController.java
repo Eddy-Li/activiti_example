@@ -13,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -71,10 +72,17 @@ public class AdminController {
     public Map<String, Object> displayUsers() {
         Map<String, Object> result = new HashMap<>();
         List<User> userList = this.identityService.createUserQuery().orderByUserLastName().asc().list();
-
+        List<Map<String, Object>> list = new ArrayList<>();
+        for (User user : userList) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("id",user.getId());
+            map.put("lastName",user.getLastName());
+            map.put("email",user.getEmail());
+            list.add(map);
+        }
         result.put("code", ResultCode.SUCCESS.getCode());
         result.put("msg", ResultCode.SUCCESS.getMsg());
-        result.put("data", userList);
+        result.put("data", list);
         return result;
     }
 
@@ -241,12 +249,22 @@ public class AdminController {
         }
 
         try {
-            List<User> list = this.identityService
+            List<User> userList = this.identityService
                     .createUserQuery()
                     .memberOfGroup(groupId)
                     .orderByUserLastName()
                     .asc()
                     .list();
+
+            List<Map<String, Object>> list = new ArrayList<>();
+            for (User user : userList) {
+                Map<String, Object> map = new HashMap<>();
+                map.put("id",user.getId());
+                map.put("lastName",user.getLastName());
+                map.put("email",user.getEmail());
+                list.add(map);
+            }
+
             result.put("data", list);
             result.put("code", ResultCode.SUCCESS.getCode());
             result.put("msg", ResultCode.SUCCESS.getMsg());

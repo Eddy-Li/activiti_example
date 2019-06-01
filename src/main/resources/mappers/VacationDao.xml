@@ -18,4 +18,8 @@
                 #{vacation.procInstId},
                 #{vacation.userId})
     </insert>
+
+    <select id="queryApplyVacationDTO" resultType="com.myit.model.VacationDTO">
+        SELECT * FROM OA_VACATION WHERE USER_ID = #{userId}
+    </select>
 </mapper>

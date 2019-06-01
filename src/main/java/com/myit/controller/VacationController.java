@@ -1,5 +1,7 @@
 package com.myit.controller;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.myit.controller.vo.VacationFormVO;
 import com.myit.service.VacationService;
 import com.myit.utils.ResultCode;
@@ -11,6 +13,8 @@ import org.activiti.engine.identity.User;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.repository.ProcessDefinitionQuery;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,7 +44,9 @@ public class VacationController {
     @Autowired
     private VacationService vacationService;
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(VacationController.class);
 
+    //获取所有流程定义
     @RequestMapping("/getAllProcess.do")
     public Map<String, Object> getAllProcess() {
         Map<String, Object> result = new HashMap<>();
@@ -68,6 +74,7 @@ public class VacationController {
         return result;
     }
 
+    //启动一个流程实例
     @RequestMapping("/startVacationProcess.do")
     public Map<String, Object> startVacationProcess(@RequestBody VacationFormVO vacationFormVO) {
         Map<String, Object> result = new HashMap<>();
@@ -105,7 +112,7 @@ public class VacationController {
     }
 
     //显示流程实例的流程图、及当前节点高亮显示
-  @RequestMapping(value = "/showDiagram.do", method = RequestMethod.GET)
+    @RequestMapping(value = "/showDiagram.do", method = RequestMethod.GET)
     public String showDiagram(HttpServletResponse response,
                               @RequestParam("processInstanceId") String processInstanceId) {
 
@@ -142,5 +149,30 @@ public class VacationController {
         return bytes;
     }
 
+    //根据用户id，获取申请的流程列表
+    @RequestMapping(value = "/queryApplyProcessList.do", method = RequestMethod.PUT)
+    public String queryApplyProcessList(@RequestParam VacationFormVO vacationFormVO) {
+        Map<String, Object> result = new HashMap<>();
+
+        String userId = vacationFormVO.getUserId();
+
+        if (StringUtils.isAnyBlank(userId)) {
+            result.put("code", ResultCode.PARAM_ERROR.getCode());
+            result.put("msg", ResultCode.PARAM_ERROR.getMsg());
+            return JSON.toJSONString(result, SerializerFeature.WRITE_MAP_NULL_FEATURES);
+        }
+        try {
+            List<Map<String, Object>> data = this.vacationService.queryApplyProcessList(userId);
+            result.put("data", data);
+            result.put("code", ResultCode.SUCCESS.getCode());
+            result.put("msg", ResultCode.SUCCESS.getMsg());
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            LOGGER.error(ex.getMessage());
+            result.put("code", ResultCode.EXCEPTION.getCode());
+            result.put("msg", ResultCode.EXCEPTION.getMsg());
+        }
+        return JSON.toJSONString(result, SerializerFeature.WRITE_MAP_NULL_FEATURES);
+    }
 
 }

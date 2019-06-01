@@ -11,6 +11,7 @@
         <property name="dataSource" ref="dataSource"/>
         <property name="transactionManager" ref="dataSourceTransactionManager"/>
         <!--activiti表不在时，创建表，在时不创建-->
+        <property name="databaseSchema" value="ACT"/>
         <property name="databaseSchemaUpdate" value="true"/>
         <property name="deploymentResources" value="classpath:bpmn/*.bpmn"/>
     </bean>

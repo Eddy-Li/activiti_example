@@ -5,6 +5,8 @@ import lombok.Setter;
 
 import java.io.Serializable;
 
+
+//申请流程时，用户填写的参数
 @Setter
 @Getter
 public class VacationFormVO implements Serializable {

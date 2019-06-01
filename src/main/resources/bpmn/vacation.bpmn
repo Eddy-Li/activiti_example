@@ -5,9 +5,19 @@
     <endEvent id="_3" name="EndEvent"/>
     <userTask activiti:candidateGroups="G0001" activiti:exclusive="true" id="_4" name="填写请假单"/>
     <sequenceFlow id="_5" sourceRef="_2" targetRef="_4"/>
-    <userTask activiti:candidateGroups="G0000" activiti:exclusive="true" id="_6" name="经理审批"/>
+    <userTask activiti:candidateGroups="G0000" activiti:exclusive="true" id="_6" name="经理审批">
+      <extensionElements>
+        <activiti:taskListener class="com.myit.module.activiti.VacationManagerTaskListener" event="create"/>
+<!--        <activiti:taskListener delegateExpression="${vacationManagerTaskListener}" event="create"/>-->
+      </extensionElements>
+    </userTask>
     <sequenceFlow id="_7" sourceRef="_4" targetRef="_6"/>
-    <userTask activiti:candidateGroups="G8888" activiti:exclusive="true" id="_10" name="老板审批"/>
+    <userTask activiti:candidateGroups="G8888" activiti:exclusive="true" id="_10" name="老板审批">
+      <extensionElements>
+        <activiti:taskListener class="com.myit.module.activiti.VacationBossTaskListener" event="create"/>
+<!--        <activiti:taskListener delegateExpression="${vacationBossTaskListener}" event="create"/>-->
+      </extensionElements>
+    </userTask>
     <sequenceFlow id="_13" sourceRef="_10" targetRef="_3"/>
     <exclusiveGateway gatewayDirection="Unspecified" id="_14" name="ExclusiveGateway"/>
     <sequenceFlow id="_15" sourceRef="_6" targetRef="_14"/>
