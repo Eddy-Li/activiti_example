@@ -134,11 +134,11 @@ public class VacationServiceImpl implements VacationService {
 
     @Override
     public void approvalProcess(String userId, String taskId, String processInstanceId, String opinion, String comment) {
-//        this.taskService.claim(taskId,userId);
         this.taskService.addComment(taskId, processInstanceId, "opinion", opinion);
         this.taskService.addComment(taskId, processInstanceId, "comment", comment);
-        this.taskService.complete(taskId);
-        if ("2".equals(opinion)) {
+        if ("1".equals(opinion)) {
+            this.taskService.complete(taskId);
+        } else {
             this.runtimeService.deleteProcessInstance(processInstanceId, userId + ":" + comment);
         }
     }
