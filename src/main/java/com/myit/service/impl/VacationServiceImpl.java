@@ -116,7 +116,7 @@ public class VacationServiceImpl implements VacationService {
     @Override
     public List<Map<String, Object>> queryToApprovalProcessList(String userId) {
         List<Map<String, Object>> maps = new ArrayList<>();
-
+        //此任务列表是正在进行的任务，也就是待审批的任务
         List<Task> taskList = this.taskService.createTaskQuery().taskAssignee(userId).list();
         for (Task task : taskList) {
             String processInstanceId = task.getProcessInstanceId();

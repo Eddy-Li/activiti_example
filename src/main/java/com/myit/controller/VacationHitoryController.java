@@ -74,6 +74,7 @@ public class VacationHitoryController {
     }
 
     //查询结束的流程中任务清单，可以用来作为显示结束的流程的审批流程和审批内容
+    //PS:如果查询当前正在执行的审批信息，可以使用此接口，然后再加上当前到到哪个节点信息就可以( List<Task> taskList = this.taskService.createTaskQuery().taskAssignee(userId).list();)
     @RequestMapping(value = "/queryHistoryTasksByProcessInstanceId.do", method = RequestMethod.GET)
     public Map<String, Object> queryHistoryTasksByProcessInstanceId(@RequestParam("processInstanceId") String processInstanceId) {
         Map<String, Object> result = new HashMap<>();
